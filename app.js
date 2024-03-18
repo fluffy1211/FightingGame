@@ -9,7 +9,28 @@ const game = document.querySelector('.game');
 // setOpponent (permet de définir l'opposant)
 // die (qui vient vérifier si le joueur n'a plus de vie, si c'est le cas afficher un message et désactiver les boutons)
 
+function rollDice() {
+    const random = Math.floor(Math.random() * 6) + 1;
 
+    const diceFace = document.createElement('img');
+    diceFace.classList.add('dice');
+    diceFace.src = `assets/${random}.png`;
+    
+
+    return diceFace;
+}
+
+game.appendChild(rollDice());
+
+const interval = setInterval(() => {
+    const dice = rollDice();
+    const img = document.querySelector('img');
+    img.src = dice.src;
+},200);
+
+const timeout = setTimeout(() => {
+    clearInterval(interval);
+}, 2000);
 
 class Player {
     constructor(name, spec, health, mana) {
@@ -75,7 +96,8 @@ class Player {
 
     setOpponent(opponent) {
         this.opponent = opponent;
-    }
+    }        
+    
 }
 
 const input1 = document.querySelector('.input1');
