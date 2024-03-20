@@ -1,4 +1,39 @@
+@font-face {
+    font-family: 'Ringbearer';
+    src: url('./font/RingbearerMedium-51mgZ.ttf');
+}
+
+h1 {
+    font-family: 'Ringbearer';
+    font-size: 3rem;
+    font-weight: 100;
+    text-align: center;
+}
+
+input {
+    padding: 0.2rem 0.3rem;
+}
+
+.game {
+    width: 80vw;
+    height: 120vh;
+    padding: 3rem;
+    background-color: #e5eef7;
+    border-radius: 1rem;
+    margin: auto;
+    text-align: center;
+    border: solid 4px rgb(162, 195, 216)
+}
+
 .dice {
     width: 5rem;
     height: 5rem;
+}
+
+.avatar {
+    margin-top: 2.5rem;
+    border-radius: 10rem;
+    height: 8rem;
+    width: 8rem;
+    
 }
