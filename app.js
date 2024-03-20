@@ -9,6 +9,8 @@ const game = document.querySelector('.game');
 // setOpponent (permet de définir l'opposant)
 // die (qui vient vérifier si le joueur n'a plus de vie, si c'est le cas afficher un message et désactiver les boutons)
 
+
+
 function rollDice() {
     const random = Math.floor(Math.random() * 6) + 1;
 
@@ -31,6 +33,56 @@ const interval = setInterval(() => {
 const timeout = setTimeout(() => {
     clearInterval(interval);
 }, 2000);
+
+
+
+class Game {
+    static new() {
+        
+        game.innerHTML = `
+        <h2 class="welcome">Welcome !</h2>
+        <input type="text" placeholder="Enter your name" class="input1">
+        <p class="chooseClass">Choose your class</p>
+        <select class="select">
+            <option value="Mage">Mage</option>
+            <option value="Warrior">Warrior</option>
+            <option value="Rogue">Rogue</option>
+            <option value="Priest">Priest</option>
+            <option value="Paladin">Paladin</option>
+        </select>
+        <button class="start">Start</button>`;
+
+        const input1 = document.querySelector('.input1');
+        const select = document.querySelector('.select');
+        const start = document.querySelector('.start');
+        const welcome = document.querySelector('.welcome');
+        const chooseClass = document.querySelector('.chooseClass');
+
+
+        start.addEventListener('click', () => {
+            const player1 = new Player(input1.value, select.value, 100, 100);
+            const player2 = new Player('Gabriel', 'Mage', 100, 100);
+
+            if (input1.value === '') {
+                alert('Please enter your name');
+                return;
+            }
+
+
+            input1.remove();
+            select.remove();
+            start.remove();
+            welcome.remove();
+            chooseClass.remove();
+
+            player1.setOpponent(player2);
+            player2.setOpponent(player1);
+        });
+    };
+}
+
+
+
 
 class Player {
     constructor(name, spec, health, mana) {
@@ -100,19 +152,6 @@ class Player {
     
 }
 
-const input1 = document.querySelector('.input1');
-const input2 = document.querySelector('.input2');
-const start = document.querySelector('.start');
-
-start.addEventListener('click', () => {
-    const Zac = new Player(input1.value, 'Princesse', 100, 100);
-    const Gabriel = new Player(input2.value, 'SDF', 100, 100);
-    input1.remove();
-    input2.remove();
-    start.remove();
-
-    Zac.setOpponent(Gabriel);
-    Gabriel.setOpponent(Zac);
-});
+Game.new();
 
 
