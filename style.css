@@ -12,17 +12,25 @@ h1 {
 
 input {
     padding: 0.2rem 0.3rem;
+    border-radius: 4px;
+}
+
+button {
+    border-radius: 8px;
+    padding: 5px;
+    cursor: pointer;
 }
 
 .game {
     width: 80vw;
-    height: 120vh;
+    height: 68vh;
     padding: 3rem;
     background-color: #e5eef7;
     border-radius: 1rem;
     margin: auto;
     text-align: center;
-    border: solid 4px rgb(162, 195, 216)
+    border: solid 4px rgb(162, 195, 216);
+    align-items: center;
 }
 
 .dice {
@@ -31,9 +39,36 @@ input {
 }
 
 .avatar {
-    margin-top: 2.5rem;
     border-radius: 10rem;
     height: 8rem;
     width: 8rem;
     
+}
+
+
+.card {
+    display: inline-block;
+    margin: 0 3rem;
+    padding: 1rem;
+    width: 20rem;
+    height: 19rem;
+}
+
+.card button {
+    display:none;
+}
+
+.vs {
+    width: 15rem;
+    padding-bottom: 3rem;
+
+}
+
+.current {
+    border-radius: 10px;
+    background-color: #97b0c8;
+}
+
+.current button {
+    display: inline;
 }
