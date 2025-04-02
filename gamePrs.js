@@ -51,7 +51,7 @@ class Game {
 
                     const vs = document.createElement('img')
                     vs.classList.add('vs')
-                    vs.src = "dice-assets/vs.png"
+                    vs.src = "./dice-assets/vs.png"
                     game.appendChild(vs)
                     
                     const player2 = new Player(gotname, gottitle, gotavatar, false)
