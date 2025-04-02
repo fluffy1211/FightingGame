@@ -1,6 +1,5 @@
 const game = document.querySelector('.game')
 
-
 // Création de la classe Game 
 class Game {
     static new() {
@@ -18,7 +17,6 @@ class Game {
                 </select>
             <button>GO</button>
         `
-
 
         const btn = document.querySelector('button')
         
@@ -44,8 +42,6 @@ class Game {
 
                     const avatar = "dice-assets/web-dev.png"
 
-                    
-
                     // Création du joueur 1 (nous) et du joueur 2 (ennemi)
                     const player1 = new Player(name, profile, avatar, true)
 
@@ -56,7 +52,6 @@ class Game {
                     
                     const player2 = new Player(gotname, gottitle, gotavatar, false)
                 
-    
                     player1.setOpponent(player2)
                     player2.setOpponent(player1)
 
@@ -64,7 +59,6 @@ class Game {
                 .catch(err => {
                     console.log(err)
                 })
-
 
             } else {
                 const error = document.createElement('p')
@@ -105,8 +99,7 @@ class Game {
     }
 }
 
-
-// Création de la classe PLayer
+// Création de la classe Player
 class Player {
     constructor(name, spec, avatar, current) {
         this.avatar = avatar
@@ -119,8 +112,6 @@ class Player {
         this.card = this.createPlayer()
     }
 
-
-    
     // getDetails retourne le nom et la spé du joueur
     getDetails() {
         return `${this.name} (${this.spec})`
@@ -151,19 +142,11 @@ class Player {
         zone.appendChild(nextBtn)
 
         nextBtn.addEventListener('click', () => {
-
-            if (this.name === game.querySelector('.name').textContent) {
-                document.querySelector('.zone').innerHTML = ""
-            
-                Game.rollDice()
-
-                setTimeout(() => {
-                    this.opponent.attack()
-                }
-                , 1550)
-            }
-
             nextBtn.remove()
+            document.querySelector('.zone').innerHTML = ""
+            
+            // Switch turns between players
+            this.toggleTurn()
         })
     }
 
@@ -204,8 +187,68 @@ class Player {
         } else {
             zone.innerHTML += "<h2 style=\"color: darkred\">Special Attack failed</h2>"
         }
+
+        // Add "Next" button after special attack too
+        const nextBtn = document.createElement('button')
+        nextBtn.textContent = "Next"
+        nextBtn.classList.add('next')
+        zone.appendChild(nextBtn)
+
+        nextBtn.addEventListener('click', () => {
+            nextBtn.remove()
+            document.querySelector('.zone').innerHTML = ""
+            
+            // Switch turns between players
+            this.toggleTurn()
+        })
     }
 
+    // Add method to toggle turns between players
+    toggleTurn() {
+        // Switch current status
+        this.current = false
+        this.opponent.current = true
+        
+        // Update UI to reflect turn change
+        this.card.classList.remove('current')
+        this.opponent.card.classList.add('current')
+        
+        // Hide buttons for players based on whose turn it is
+        // We DO NOT hide the cards, only the buttons
+        const buttons = this.card.querySelectorAll('.attack-btn, .spec-btn');
+        buttons.forEach(button => {
+            button.style.display = "none";
+        });
+        
+        const opponentButtons = this.opponent.card.querySelectorAll('.attack-btn, .spec-btn');
+        if (this.opponent.name === document.querySelectorAll('.card')[0].querySelector('.name').textContent.split(' ')[0]) {
+            // This is the human player's turn, show their buttons
+            opponentButtons.forEach(button => {
+                button.style.display = "inline-block";
+            });
+        } else {
+            // This is the AI's turn, keep buttons hidden
+            opponentButtons.forEach(button => {
+                button.style.display = "none";
+            });
+            
+            // AI plays automatically after a short delay
+            setTimeout(() => {
+                // AI randomly chooses between normal and special attack
+                const attackType = Math.random() > 0.5 && this.opponent.mana >= 30 ? 'special' : 'normal';
+                
+                Game.rollDice()
+                
+                setTimeout(() => {
+                    if (attackType === 'special') {
+                        this.opponent.specialAttack()
+                    } else {
+                        this.opponent.attack()
+                    }
+                }, 1550)
+            }, 1000)
+        }
+    }
 
     // createPlayer
     createPlayer() {
@@ -219,7 +262,6 @@ class Player {
             card.classList.remove('current')
         }
     
-
         card.innerHTML = `
             <img class="avatar" src="${this.avatar}" alt="avatar">
             <h2 class="name">${this.getDetails()}</h2>
@@ -232,8 +274,17 @@ class Player {
         const attackBtn = card.querySelector('.attack-btn')
         const specBtn = card.querySelector('.spec-btn')
 
+        // Hide buttons initially if not current player
+        if (!this.current) {
+            attackBtn.style.display = "none";
+            specBtn.style.display = "none";
+        }
+
         // Écouteur d'événement pour l'attaque spéciale
         specBtn.addEventListener('click', () => {
+            // Only allow action if it's this player's turn
+            if (!this.current) return;
+            
             document.querySelector('.zone').innerHTML = ""
            
             if (this.mana < 30) {
@@ -250,12 +301,11 @@ class Player {
             }, 1550)
         })
 
-        
-
-
-
         // Écouteur d'événement pour l'attaque
         attackBtn.addEventListener('click', () => {
+            // Only allow action if it's this player's turn
+            if (!this.current) return;
+            
             document.querySelector('.zone').innerHTML = ""
             
             Game.rollDice()
@@ -263,10 +313,7 @@ class Player {
             setTimeout(() => {
                 this.attack()
             }, 1550)
-
-            
         })
-
     
         // J'ajoute ma card à mon jeu
         game.appendChild(card)
@@ -277,43 +324,9 @@ class Player {
     setOpponent(opponent) {
         this.opponent = opponent
     }
-    
 }
 
-
-
 Game.new()
-
-
-// 1) La spec attaque à prendre en compte
-// Si on fait 6 - 30 de vie à l'adversaire
-// Si on fait 5 - 20 de vie à l'adversaire
-// Si on fait 4 - 10 de vie à l'adversaire
-// En dessous c'est un échec
-// Cout de la spec attack: 30 de mana
-
-// Déroulé pour la spec:
-// Ajouter le bouyon lors de la création du joueur
-// Ecouter le bouton en question et lorsqu'on clique on déclebche la spec 
-// Représenter les issues possilbles de la spec attaque avec un switch de préférence
-
-// 2) Un bouton next doit apparaître pour passer au tour suivant
-// Le joueur adverse doit attaquer automatiquement
-
-// 3) Un système de tour doit être mis en place
-// On doit alterner les tours entre les joueurs
-// - Quand c'est notre tour la carte du joueur doit être en surbrillance
-// - Celui qui ne joue pas ne doit pas avoir les boutons actifs
-
-// Indices :
-
-// Indices :
-
-
-// Créer une prop "current" à fournir lors de l'instanciation de player
-// Cette prop est un booléen qui indique si c'est le tour du joueur ou non
-// On pourra également ajouter une classe CSS current au player qui joue pour le mettre en surbrillance
-// On pourra également désactiver les boutons du joueur qui ne joue pas
 
 
 
